@@ -9,6 +9,16 @@ export const getItems = async (req, res) => {
   }
 };
 
+export const getItemById = async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Item not found' });
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const createItem = async (req, res) => {
   try {
     const { name, sku, description, unit, minStockAlert } = req.body;

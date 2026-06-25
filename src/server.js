@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
 import machineRoutes from './routes/machineRoutes.js';
 import ledgerRoutes from './routes/ledgerRoutes.js';
+import supplierRoutes from './routes/supplierRoutes.js';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/machines', machineRoutes);
 app.use('/api/ledger', ledgerRoutes);
+app.use('/api/suppliers', supplierRoutes);
 
 // Base route for testing
 app.get('/', (req, res) => {

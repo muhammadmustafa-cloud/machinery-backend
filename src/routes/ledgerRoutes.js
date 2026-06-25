@@ -1,5 +1,5 @@
 import express from 'express';
-import { getLedger, addStock, consumeStock } from '../controllers/ledgerController.js';
+import { getLedger, addTransaction } from '../controllers/ledgerController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -7,10 +7,6 @@ const router = express.Router();
 router.route('/')
   .get(protect, getLedger);
 
-router.route('/in')
-  .post(protect, addStock);
-
-router.route('/out')
-  .post(protect, consumeStock);
+router.post('/transaction', protect, addTransaction);
 
 export default router;

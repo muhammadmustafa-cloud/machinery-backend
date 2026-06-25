@@ -27,7 +27,8 @@ const ledgerSchema = new mongoose.Schema({
     default: 0
   },
   supplier: { 
-    type: String 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Supplier'
   },
   date: { 
     type: Date, 
