@@ -4,10 +4,11 @@ import Machine from '../models/Machine.js';
 
 export const getLedger = async (req, res) => {
   try {
-    const { itemId, machineId, startDate, endDate, type } = req.query;
+    const { itemId, machineId, supplierId, startDate, endDate, type } = req.query;
     let query = {};
     if (itemId) query.item = itemId;
     if (machineId) query.machine = machineId;
+    if (supplierId) query.supplier = supplierId;
     if (type) query.type = type;
 
     if (startDate || endDate) {
