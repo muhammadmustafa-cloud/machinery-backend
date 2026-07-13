@@ -50,7 +50,21 @@ export const addTransaction = async (req, res) => {
     }
 
     const savedEntries = [];
-    const actualDate = date || Date.now();
+    // Parse the date from frontend as noon UTC to be timezone-safe.
+    // A plain YYYY-MM-DD at T12:00:00Z can never drift into the wrong day
+    // due to timezone offsets (max ±14h from UTC).
+    let actualDate;
+    if (date) {
+      // date is expected as 'YYYY-MM-DD' string from frontend
+      actualDate = new Date(`${date}T12:00:00.000Z`);
+    } else {
+      // fallback: use current date at noon UTC
+      const now = new Date();
+      const y = now.getUTCFullYear();
+      const m = String(now.getUTCMonth() + 1).padStart(2, '0');
+      const d = String(now.getUTCDate()).padStart(2, '0');
+      actualDate = new Date(`${y}-${m}-${d}T12:00:00.000Z`);
+    }
 
     for (let i of items) {
       if (!i.item || !i.quantity || i.quantity <= 0) continue;
