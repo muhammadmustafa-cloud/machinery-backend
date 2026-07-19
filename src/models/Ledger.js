@@ -4,7 +4,11 @@ const ledgerSchema = new mongoose.Schema({
   type: { 
     type: String, 
     required: true, 
-    enum: ['IN', 'OUT'] // IN = Purchase, OUT = Consumed in Machine
+    enum: ['IN', 'OUT', 'ADJUSTMENT'] // IN = Purchase, OUT = Consumed in Machine, ADJUSTMENT = Old Stock/Corrections
+  },
+  adjustmentType: {
+    type: String,
+    enum: ['ADD', 'REMOVE']
   },
   item: { 
     type: mongoose.Schema.Types.ObjectId, 

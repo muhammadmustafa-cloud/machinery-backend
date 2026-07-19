@@ -36,7 +36,7 @@ export const getLedger = async (req, res) => {
 
 export const addTransaction = async (req, res) => {
   try {
-    const { type, supplier, machine, items, remarks, date } = req.body;
+    const { type, supplier, machine, items, remarks, date, adjustmentType } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: 'Items array is required' });
@@ -47,6 +47,9 @@ export const addTransaction = async (req, res) => {
     }
     if (type === 'OUT' && !machine) {
       return res.status(400).json({ message: 'Machine is required for Used transactions' });
+    }
+    if (type === 'ADJUSTMENT' && !adjustmentType) {
+      return res.status(400).json({ message: 'Adjustment Type (ADD/REMOVE) is required for adjustments' });
     }
 
     const savedEntries = [];
@@ -79,11 +82,21 @@ export const addTransaction = async (req, res) => {
           return res.status(400).json({ message: `Insufficient stock for ${itemDoc.name}. Available: ${itemDoc.currentStock}` });
         }
         itemDoc.currentStock -= Number(i.quantity);
+      } else if (type === 'ADJUSTMENT') {
+        if (adjustmentType === 'ADD') {
+          itemDoc.currentStock += Number(i.quantity);
+        } else if (adjustmentType === 'REMOVE') {
+          if (itemDoc.currentStock < Number(i.quantity)) {
+            return res.status(400).json({ message: `Insufficient stock for ${itemDoc.name} to remove. Available: ${itemDoc.currentStock}` });
+          }
+          itemDoc.currentStock -= Number(i.quantity);
+        }
       }
       await itemDoc.save();
 
       const ledgerEntry = new Ledger({
         type,
+        adjustmentType: type === 'ADJUSTMENT' ? adjustmentType : undefined,
         item: i.item,
         quantity: i.quantity,
         price: type === 'IN' ? i.price : undefined,
